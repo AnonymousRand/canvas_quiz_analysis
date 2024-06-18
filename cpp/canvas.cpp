@@ -99,7 +99,7 @@ int main() {
     for (int i = 0; i < kMax; i++) {
         factorialMemoize[i] = mpf_class(0);
     } 
-    mpf_class** binaryCheckMemoize = (mpf_class**) malloc(kMax * sizeof(binaryCheckMemoize[0])); // # using kMax cause lazy
+    mpf_class** binaryCheckMemoize = (mpf_class**) malloc(kMax * sizeof(binaryCheckMemoize[0])); // using kMax cause lazy
     for (int i = 0; i < kMax; i++) {
         binaryCheckMemoize[i] = (mpf_class*) malloc(kMax * sizeof(binaryCheckMemoize[0][0]));
         for (int j = 0; j < kMax; j++) {
