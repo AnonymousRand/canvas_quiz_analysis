@@ -1,7 +1,8 @@
 import math
 from binary_check import Node
 
-max_k = 200
+min_k = int(input("k min (inclusive):"))
+max_k = int(input("k max (exclusive):"))
 binary_check_trials = 1000
 binary_check_memoize = [[-1 for i in range(max_k)] for j in range(max_k)] # using max_k cause lazy
 
@@ -52,5 +53,5 @@ def gen_tree(k, num_branches=None, old_score=0, old_attempts=0, old_prob=1, dept
     return EV
 
 # main
-for k in range(1, max_k):
+for k in range(min_k, max_k):
     print(k, gen_tree(k) / k)
