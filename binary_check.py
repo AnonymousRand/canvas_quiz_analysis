@@ -12,7 +12,7 @@ class Node:
 
         self.left = None
         self.right = None
-        self.leafs = []
+        self.leaves = []
         self.crossed = False
         self.correct = False
 
@@ -22,21 +22,21 @@ class Node:
             self.left = Node(a, b, left_val, self)
             self.right = Node(a, b, right_val, self)
         elif root_val == 1 and parent is not None:
-            parent.leafs.append(self)
+            parent.leaves.append(self)
 
-        # sync leafs information all the way up to tree root
+        # sync leaves information all the way up to tree root
         if parent is not None:
-            parent.leafs += self.leafs
+            parent.leaves += self.leaves
 
         # root: generate correct answers
         if parent is None:
             answers = random.sample(range(b), a)
             for i in answers:
-                self.leafs[i].correct = True
+                self.leaves[i].correct = True
 
     def get_score(self):
         score = 0
-        for leaf in self.leafs:
+        for leaf in self.leaves:
             if leaf.correct:
                 score += 1
         return score

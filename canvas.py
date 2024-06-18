@@ -4,7 +4,7 @@ from binary_check import Node
 min_k = int(input("k min (inclusive):"))
 max_k = int(input("k max (exclusive):"))
 binary_check_trials = 1000
-binary_check_memoize = [[-1 for i in range(max_k)] for j in range(max_k)] # using max_k cause lazy
+binary_check_memoize = [[0 for i in range(max_k)] for j in range(max_k)] # using max_k cause lazy
 
 def gen_tree(k, num_branches=None, old_score=0, old_attempts=0, old_prob=1, depth=0):
     if num_branches is None:
@@ -35,7 +35,7 @@ def gen_tree(k, num_branches=None, old_score=0, old_attempts=0, old_prob=1, dept
         if a == 0 or b < 2:                                  # if we don't need binary check
             new_attempts = old_attempts + 1
         else:
-            if binary_check_memoize[b][a] == -1:
+            if binary_check_memoize[b][a] == 0:
                 if a == 1 and (b & (b - 1) == 0) and b != 0: # https://stackoverflow.com/a/57025941
                     binary_check_memoize[b][a] = math.log2(b)
                 else:
