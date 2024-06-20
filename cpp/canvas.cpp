@@ -95,7 +95,7 @@ int main() {
     std::cout << "k max (exclusive): ";
     std::cin >> kMax;
 
-    mpf_class* factorialMemoize = (mpf_class*) malloc(kMax * sizeof(factorialMemoize[0])); // using kMax since lazy
+    mpf_class* factorialMemoize = (mpf_class*) malloc(kMax * sizeof(factorialMemoize[0])); // using kMax cause lazy
     for (int i = 0; i < kMax; i++) {
         // "conditional jump or move depends on uninitialized value" there are no memory errors in ba sing se
         // (i dont think im initializing `mpf_class`es right, because there's no memory issues if they're `double`s)
