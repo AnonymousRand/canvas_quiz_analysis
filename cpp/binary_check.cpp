@@ -1,6 +1,7 @@
 #include "binary_check.h"
 #include <iostream>
 #include <random>
+#include <unordered_set>
 
 Node::Node(int a, int b, int rootVal, Node* parent) {
     this->a = a;
