@@ -2,7 +2,7 @@
 #include <vector>
 
 class Node {
-    public: // who needs data hiding and getters and setters
+    private:
         int a;
         int b;
         int rootVal;
@@ -14,9 +14,11 @@ class Node {
         Node* parent;
         std::vector<Node*> leaves;
 
-        Node(int a, int b, int rootVal, Node* parent);
-        ~Node();
         int getScore();
         void traverse(int& attempts, int& remainingTargets);
+
+    public:
+        Node(int a, int b, int rootVal, Node* parent);
+        ~Node();
         int runBinaryCheck();
 };
