@@ -92,18 +92,20 @@ int main() {
     int binaryCheckTrials = 1000;
     std::cout << "k min (inclusive): ";
     std::cin >> kMin;
-    std::cout << "k max (inclusive): ";
+    std::cout << "k max (exclusive): ";
     std::cin >> kMax;
 
-    mpf_class* factorialMemoize = (mpf_class*) malloc(kMax * sizeof(factorialMemoize[0]));
+    mpf_class* factorialMemoize = (mpf_class*) malloc(kMax * sizeof(factorialMemoize[0])); // using kMax since lazy
     for (int i = 0; i < kMax; i++) {
-        factorialMemoize[i] = mpf_class(0);
-    } 
-    mpf_class** binaryCheckMemoize = (mpf_class**) malloc(kMax * sizeof(binaryCheckMemoize[0])); // using kMax cause lazy
+        // "conditional jump or move depends on uninitialized value" there are no memory errors in ba sing se
+        // (i dont think im initializing `mpf_class`es right, but it's probably still better than slow vectors)
+        factorialMemoize[i] = mpf_class(0.0);
+    }
+    mpf_class** binaryCheckMemoize = (mpf_class**) malloc(kMax * sizeof(binaryCheckMemoize[0]));
     for (int i = 0; i < kMax; i++) {
         binaryCheckMemoize[i] = (mpf_class*) malloc(kMax * sizeof(binaryCheckMemoize[0][0]));
         for (int j = 0; j < kMax; j++) {
-            binaryCheckMemoize[i][j] = mpf_class(0);
+            binaryCheckMemoize[i][j] = mpf_class(0.0);
         }
     }
 
