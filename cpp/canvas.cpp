@@ -4,8 +4,8 @@
 #include "binary_check.h"
 #include <algorithm>
 #include <cmath>
-#include <iostream>
 #include <gmpxx.h>
+#include <iostream>
 
 mpf_class factorial(int n, mpf_class* factorialMemoize) {
     if (n == 1) {
