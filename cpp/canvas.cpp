@@ -26,12 +26,12 @@ mpf_class combination(int n, int r, mpf_class* factorialMemoize) {
             / (factorial(r, factorialMemoize) * factorial(n - r, factorialMemoize));
 }
 
-mpf_class genTree(int k, int numBranches, int oldScore, mpf_class oldAttempts, mpf_class oldProb, int depth,
-        int binaryCheckTrials, mpf_class* factorialMemoize, mpf_class** binaryCheckMemoize) {
+mpf_class genTree(int k, int options, int numBranches, int oldScore, mpf_class oldAttempts, mpf_class oldProb,
+        int depth, int binaryCheckTrials, mpf_class* factorialMemoize, mpf_class** binaryCheckMemoize) {
     if (numBranches == NULL) {
         numBranches = k + 1;
     }
-    if (depth == 3) {
+    if (depth == options - 1) {
         numBranches = 1;
     }
 
@@ -41,12 +41,12 @@ mpf_class genTree(int k, int numBranches, int oldScore, mpf_class oldAttempts, m
         int newScore = k - j;
         mpf_class newAttempts;
         mpf_class newProb;
-        if (depth == 3) {
+        if (depth == options - 1) {
             newProb = oldProb;
         } else {
             newProb = oldProb * combination(incorrectBefore, incorrectBefore - j, factorialMemoize) \
-                    * pow((float) 1 / (4 - depth), incorrectBefore - j) \
-                    * pow((float) (4 - depth - 1) / (4 - depth), j);
+                    * pow((float) 1 / (options - depth), incorrectBefore - j) \
+                    * pow((float) (options - depth - 1) / (options - depth), j);
         }
 
         // if we've reached an ending, calculate attempts * total prob and add to EV as before
@@ -59,7 +59,7 @@ mpf_class genTree(int k, int numBranches, int oldScore, mpf_class oldAttempts, m
         // binary check simulator (don't forget symmetry!)
         int a = std::min(newScore - oldScore, k - (newScore - oldScore));
         int b = k - oldScore;
-        if (a == 0 || b < 2) {                                // if we don't need binary check
+        if (a == 0 || b == 1) {                               // if we don't need binary check
             newAttempts = oldAttempts + 1;
         } else {
             if (binaryCheckMemoize[b][a] == NULL) {
@@ -79,7 +79,7 @@ mpf_class genTree(int k, int numBranches, int oldScore, mpf_class oldAttempts, m
 
         // recursively call on sub-branches
         // num_branches = j + 1 to account for getting 0 more correct next attempt
-        EV += genTree(k, j + 1, newScore, newAttempts, newProb, depth + 1,
+        EV += genTree(k, options, j + 1, newScore, newAttempts, newProb, depth + 1,
                 binaryCheckTrials, factorialMemoize, binaryCheckMemoize);
     }
 
@@ -89,11 +89,14 @@ mpf_class genTree(int k, int numBranches, int oldScore, mpf_class oldAttempts, m
 int main() {
     int kMin;
     int kMax;
+    int options;
     int binaryCheckTrials = 1000;
     std::cout << "k min (inclusive): ";
     std::cin >> kMin;
     std::cout << "k max (exclusive): ";
     std::cin >> kMax;
+    std::cout << "number of options per question: ";
+    std::cin >> options;
 
     mpf_class* factorialMemoize = (mpf_class*) malloc(kMax * sizeof(factorialMemoize[0])); // using kMax cause lazy
     for (int i = 0; i < kMax; i++) {
@@ -111,7 +114,7 @@ int main() {
 
     for (int k = kMin; k < kMax; k++) {
         std::cout << k << " " \
-                << genTree(k, NULL, 0, 0, 1.0, 0, binaryCheckTrials, factorialMemoize, binaryCheckMemoize) / k \
+                << genTree(k, options, NULL, 0, 0, 1.0, 0, binaryCheckTrials, factorialMemoize, binaryCheckMemoize) / k \
                 << "\n";
     }
 
