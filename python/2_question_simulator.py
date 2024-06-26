@@ -40,16 +40,16 @@ for _ in range(trials):
                 continue
 
             if score == 1:
-                if not one_confirmed: # if we need extra turn
+                if not one_confirmed:    # if we need extra turn
                     one_confirmed = True
                     original_second_guess = guess[1]
 
                     guess[1] = BLANK
                     score = get_score(correct, guess)
-                    if score == 1: # if we got the first one right
+                    if score == 1:       # if we got the first one right
                         confirmed_guess = 0
                         guess[1] = original_second_guess + 1
-                    else: # if we got the second one right
+                    else:                # if we got the second one right
                         confirmed_guess = 1
                         guess[1] = original_second_guess
                         guess[0] += 1
