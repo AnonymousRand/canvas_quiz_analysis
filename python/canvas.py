@@ -29,7 +29,7 @@ def gen_tree(k, num_branches=None, old_score=0, old_attempts=0, old_prob=1, dept
             EV += new_attempts * new_prob
             continue
 
-        # binary check approximator (don't forget symmetry!)
+        # binary check simulator (don't forget symmetry!)
         a = min(new_score - old_score, k - (new_score - old_score))
         b = k - old_score
         if a == 0 or b < 2:                                  # if we don't need binary check

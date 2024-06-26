@@ -56,7 +56,7 @@ mpf_class genTree(int k, int numBranches, int oldScore, mpf_class oldAttempts, m
             continue;
         }
 
-        // binary check approximator (don't forget symmetry!)
+        // binary check simulator (don't forget symmetry!)
         int a = std::min(newScore - oldScore, k - (newScore - oldScore));
         int b = k - oldScore;
         if (a == 0 || b < 2) {                                // if we don't need binary check
