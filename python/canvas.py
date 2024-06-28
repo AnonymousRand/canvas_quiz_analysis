@@ -18,7 +18,7 @@ def gen_tree(k, options, num_branches=None, old_score=0, old_attempts=0, old_pro
         incorrect_before = k - old_score # i (except for attempt 1 on the tree)
         new_score = k - j
         new_attempts = old_attempts
-        if depth == options - 1:
+        if depth == options - 1:         # if on fourth non-extra attempt
             new_prob = old_prob
         else:
             new_attempts += 1            # remember that fourth attempts are overlapped and do not count

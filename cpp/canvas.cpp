@@ -41,7 +41,7 @@ mpf_class genTree(int k, int options, int numBranches, int oldScore, mpf_class o
         int newScore = k - j;
         mpf_class newAttempts = oldAttempts;
         mpf_class newProb;
-        if (depth == options - 1) {
+        if (depth == options - 1) {         // if on fourth non-extra attempt
             newProb = oldProb;
         } else {
             newAttempts++;                  // remember that fourth attempts are overlapped and do not count
