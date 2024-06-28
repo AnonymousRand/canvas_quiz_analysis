@@ -8,7 +8,7 @@ attempts = 0
 for _ in range(trials):
     for question in range(questions):
         correct = random.randint(0, choices - 1)
-        for guess in range(choices):
+        for guess in range(choices - 1): # -1 for last attempt skip
             attempts += 1
             if guess == correct:
                 break

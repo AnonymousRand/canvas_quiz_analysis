@@ -39,19 +39,19 @@ mpf_class genTree(int k, int options, int numBranches, int oldScore, mpf_class o
     for (int j = 0; j < numBranches; j++) { // j is the red numberpc
         int incorrectBefore = k - oldScore; // i (except for attempt 1 on the tree)
         int newScore = k - j;
-        mpf_class newAttempts;
+        mpf_class newAttempts = oldAttempts;
         mpf_class newProb;
         if (depth == options - 1) {
             newProb = oldProb;
         } else {
+            newAttempts++;                  // remember that fourth attempts are overlapped and do not count
             newProb = oldProb * combination(incorrectBefore, incorrectBefore - j, factorialMemoize) \
                     * pow((float) 1 / (options - depth), incorrectBefore - j) \
                     * pow((float) (options - depth - 1) / (options - depth), j);
         }
 
-        // if we've reached an ending, calculate attempts * total prob and add to EV as before
+        // if we've reached an ending, calculate attempts * total prob and add to EV
         if (newScore == k) {
-            newAttempts = oldAttempts + 1;
             EV += newAttempts * newProb;
             continue;
         }
@@ -59,22 +59,21 @@ mpf_class genTree(int k, int options, int numBranches, int oldScore, mpf_class o
         // binary check simulator (don't forget symmetry!)
         int a = std::min(newScore - oldScore, k - (newScore - oldScore));
         int b = k - oldScore;
-        if (a == 0 || b == 1) {                               // if we don't need binary check
-            newAttempts = oldAttempts + 1;
-        } else {
+        if (a != 0 && b != 1) {                               // if we need binary check
             if (binaryCheckMemoize[b][a] == NULL) {
-                if (a == 1 && (b & (b - 1) == 0) && b != 0) { // https://stackoverflow.com/a/57025941
+                if (a == 1 && (b & (b - 1) == 0) && b != 0) { // shortcut if single-target and b power of 2 (no rounding)
+                                                              // https://stackoverflow.com/a/57025941
                     binaryCheckMemoize[b][a] = log2(b);
                 } else {
-                    newAttempts = 0;
+                    int binaryCheckAttemptsTotal = 0;
                     for (int i = 0; i < binaryCheckTrials; i++) {
                         Node tree(a, b, NULL, NULL);
-                        newAttempts += tree.runBinaryCheck();
+                        binaryCheckAttemptsTotal += tree.runBinaryCheck();
                     }
-                    binaryCheckMemoize[b][a] = newAttempts / binaryCheckTrials;
+                    binaryCheckMemoize[b][a] = (float) binaryCheckAttemptsTotal / binaryCheckTrials;
                 }
             }
-            newAttempts = oldAttempts + 1 + binaryCheckMemoize[b][a];
+            newAttempts += binaryCheckMemoize[b][a];
         }
 
         // recursively call on sub-branches
