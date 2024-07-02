@@ -36,7 +36,7 @@ mpf_class genTree(int k, int options, int numBranches, int oldScore, mpf_class o
     }
 
     mpf_class EV = 0.0;
-    for (int j = 0; j < numBranches; j++) { // j is the red numberpc
+    for (int j = 0; j < numBranches; j++) { // j is the red number
         int incorrectBefore = k - oldScore; // i (except for attempt 1 on the tree)
         int newScore = k - j;
         mpf_class newAttempts = oldAttempts;
