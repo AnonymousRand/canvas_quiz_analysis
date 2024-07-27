@@ -100,7 +100,7 @@ int main() {
     mpf_class* factorialMemoize = (mpf_class*) malloc(kMax * sizeof(factorialMemoize[0])); // using kMax cause lazy
     for (int i = 0; i < kMax; i++) {
         // "conditional jump or move depends on uninitialized value" there are no memory errors in ba sing se
-        // (i dont think im initializing `mpf_class`es right, because there's no memory issues if they're doubles)
+        // (i dont think im initializing `mpf_class`es right, because there are no memory issues if they're doubles)
         factorialMemoize[i] = mpf_class(0.0);
     }
     mpf_class** binaryCheckMemoize = (mpf_class**) malloc(kMax * sizeof(binaryCheckMemoize[0]));
