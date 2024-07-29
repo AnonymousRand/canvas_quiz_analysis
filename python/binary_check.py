@@ -79,7 +79,7 @@ class Node:
         attempts = 0
         remaining_targets = self.a
 
-        ## Recursively check left and right children and keep "global" values for these 2 values
+        ## Recursively check left and right children, and keep "global" values for these 2 values
         attempts, remaining_targets = self.left.traverse(attempts, remaining_targets)
         attempts, remaining_targets = self.right.traverse(attempts, remaining_targets)
 

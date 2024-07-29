@@ -112,7 +112,7 @@ int Node::runBinaryCheck() {
     int attempts = 0;
     int remainingTargets = this->a;
 
-    /* Recursively check left and right children and keep "global" values for these 2 values */
+    /* Recursively check left and right children, and keep "global" values for these 2 values */
     this->left->traverse(attempts, remainingTargets);
     this->right->traverse(attempts, remainingTargets);
 
