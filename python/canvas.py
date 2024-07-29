@@ -26,18 +26,19 @@ def gen_tree(k, options, num_branches=None, old_score=0, old_attempts=0, old_pro
                     * math.pow(1 / (options - depth), incorrect_before - j) \
                     * math.pow((options - depth - 1) / (options - depth), j)
         
-        # if we've reached an ending, calculate attempts * total prob and add to EV
+        ## If we've reached an ending, calculate attempts * total prob and add to EV
         if new_score == k:
             EV += new_attempts * new_prob
             continue
 
-        # binary check simulator (don't forget symmetry!)
+        ## Binary check simulator (don't forget symmetry!)
         a = min(new_score - old_score, k - (new_score - old_score))
         b = k - old_score
-        if a != 0 and b != 1:                                # if we need binary check
+        if a != 0 and b != 1: # if we need binary check
             if binary_check_memoize[b][a] == 0:
-                if a == 1 and (b & (b - 1) == 0) and b != 0: # shortcut if single-target and b power of 2 (no rounding)
-                                                             # https://stackoverflow.com/a/57025941
+                # shortcut if single-target and `b` is a power of 2 (no rounding)
+                # (https://stackoverflow.com/a/57025941)
+                if a == 1 and (b & (b - 1) == 0) and b != 0:
                     binary_check_memoize[b][a] = math.log2(b)
                 else:
                     binary_check_attempts_total = 0
@@ -47,12 +48,12 @@ def gen_tree(k, options, num_branches=None, old_score=0, old_attempts=0, old_pro
                     binary_check_memoize[b][a] = binary_check_attempts_total / binary_check_trials
             new_attempts += binary_check_memoize[b][a]
 
-        # recursively call on sub-branches
-        # num_branches = j + 1 to account for getting 0 more correct next attempt
+        ## Recursively call on sub-branches
+        ## (num_branches = j + 1 to account for getting 0 more correct next attempt)
         EV += gen_tree(k, options, j + 1, new_score, new_attempts, new_prob, depth + 1)
 
     return EV
 
-# main
+## Main
 for k in range(min_k, max_k):
     print(k, gen_tree(k, options) / k)

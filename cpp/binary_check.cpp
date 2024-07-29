@@ -26,12 +26,12 @@ Node::Node(int a, int b, int rootVal, Node* parent) {
         parent->leaves.push_back(this);
     }
 
-    // sync leaves information all the way up to tree root
+    /* Sync leaves information all the way up to tree root */
     if (parent != NULL) {
         parent->leaves.insert(parent->leaves.end(), this->leaves.begin(), this->leaves.end());
     }
 
-    // root: generate correct answers
+    /* Root: generate correct answers */
     if (parent == NULL) {
         std::random_device r; // srand() by time did not seem to seed well, so here we are
         std::default_random_engine e1(r());
@@ -67,12 +67,12 @@ int Node::getScore() {
 }
 
 void Node::traverse(int& attempts, int& remainingTargets) {
-    // terminate recursion if we've found all
+    /* Terminate recursion if we've found all */
     if (remainingTargets == 0) {
         return;
     }
 
-    // visit node and poison sibling like an ancient Chinese prince
+    /* Visit node and poison sibling like an ancient Chinese prince */
     if (!this->crossed) {
         attempts++;
         if (this->parent != NULL) {
@@ -80,7 +80,7 @@ void Node::traverse(int& attempts, int& remainingTargets) {
         }
     }
 
-    // if leaf node; if no attempts += 1, then this is functionally a deduction
+    /* If leaf node; if no attempts += 1, then this is functionally a deduction */
     if (this->rootVal == 1) {
         if (this->correct) {
             remainingTargets--;
@@ -88,12 +88,12 @@ void Node::traverse(int& attempts, int& remainingTargets) {
         return;
     }
 
-    // if score is 0, skip entire subtree ("flip")
+    /* If score is 0, skip entire subtree ("flip") */
     if (this->getScore() == 0) {
         return;
     }
 
-    // recursively check left and right children
+    /* Recursively check left and right children */
     if (this->left != NULL) {
         this->left->traverse(attempts, remainingTargets);
         if (remainingTargets == 0) {
@@ -112,8 +112,7 @@ int Node::runBinaryCheck() {
     int attempts = 0;
     int remainingTargets = this->a;
 
-    // recursively check left and right children
-    // and keep "global" values for these 2 values
+    /* Recursively check left and right children and keep "global" values for these 2 values */
     this->left->traverse(attempts, remainingTargets);
     this->right->traverse(attempts, remainingTargets);
 

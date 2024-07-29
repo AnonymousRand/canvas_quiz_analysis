@@ -1,5 +1,7 @@
-// Compile with `g++ binary_check.cpp canvas.cpp -lgmpxx -lgmp -o canvas`
-// Make sure to `sudo apt install libgmp-dev`
+/*
+ * Compile with `g++ binary_check.cpp canvas.cpp -lgmpxx -lgmp -o canvas`
+ * Make sure to `sudo apt install libgmp-dev`
+ */
 
 #include "binary_check.h"
 #include <algorithm>
@@ -50,19 +52,20 @@ mpf_class genTree(int k, int options, int numBranches, int oldScore, mpf_class o
                     * pow((float) (options - depth - 1) / (options - depth), j);
         }
 
-        // if we've reached an ending, calculate attempts * total prob and add to EV
+        /* If we've reached an ending, calculate attempts * total prob and add to EV */
         if (newScore == k) {
             EV += newAttempts * newProb;
             continue;
         }
 
-        // binary check simulator (don't forget symmetry!)
+        /* Binary check simulator (don't forget symmetry!) */
         int a = std::min(newScore - oldScore, k - (newScore - oldScore));
         int b = k - oldScore;
-        if (a != 0 && b != 1) {                               // if we need binary check
+        if (a != 0 && b != 1) { // if we need binary check
             if (binaryCheckMemoize[b][a] == NULL) {
-                if (a == 1 && (b & (b - 1) == 0) && b != 0) { // shortcut if single-target and b power of 2 (no rounding)
-                                                              // https://stackoverflow.com/a/57025941
+                // shortcut if single-target and `b` is a power of 2 (no rounding)
+                // (https://stackoverflow.com/a/57025941)
+                if (a == 1 && (b & (b - 1) == 0) && b != 0) {
                     binaryCheckMemoize[b][a] = log2(b);
                 } else {
                     int binaryCheckAttemptsTotal = 0;
@@ -76,8 +79,8 @@ mpf_class genTree(int k, int options, int numBranches, int oldScore, mpf_class o
             newAttempts += binaryCheckMemoize[b][a];
         }
 
-        // recursively call on sub-branches
-        // num_branches = j + 1 to account for getting 0 more correct next attempt
+        /* Recursively call on sub-branches */
+        /* (num_branches = j + 1 to account for getting 0 more correct next attempt) */
         EV += genTree(k, options, j + 1, newScore, newAttempts, newProb, depth + 1,
                 binaryCheckTrials, factorialMemoize, binaryCheckMemoize);
     }
@@ -117,7 +120,6 @@ int main() {
                 << "\n";
     }
 
-    // free
     for (int i = 0; i < kMax; i++) {
         free(binaryCheckMemoize[i]);
     }
