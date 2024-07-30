@@ -24,11 +24,11 @@ class Node:
         elif root_val == 1 and parent is not None:
             parent.leaves.append(self)
 
-        ## Sync leaves information all the way up to tree root
+        # sync leaves information all the way up to tree root
         if parent is not None:
             parent.leaves += self.leaves
 
-        ## Root: generate correct answers
+        # root: generate correct answers
         if parent is None:
             answers = random.sample(range(b), a)
             for i in answers:
@@ -42,28 +42,28 @@ class Node:
         return score
 
     def traverse(self, attempts, remaining_targets):
-        ## Terminate recursion if we've found all
+        # terminate recursion if we've found all
         if remaining_targets == 0:
             return attempts, 0
 
-        ## Visit node and poison sibling like an ancient Chinese prince
+        # visit node and poison sibling like an ancient Chinese prince
         if not self.crossed:
             attempts += 1
             if self.parent is not None:
                 self.parent.right.crossed = True
 
-        ## If leaf node; if no attempts += 1, then this is functionally a deduction
+        # if leaf node; if no attempts += 1, then this is functionally a deduction
         if self.root_val == 1:
             if self.correct:
                 return attempts, remaining_targets - 1
             else:
                 return attempts, remaining_targets
 
-        ## If score is 0, skip entire subtree ("flip")
+        # if score is 0, skip entire subtree ("flip")
         if self.get_score() == 0:
             return attempts, remaining_targets
 
-        ## Recursively check left and right children
+        # recursively check left and right children
         if self.left is not None:
             attempts, remaining_targets = self.left.traverse(attempts, remaining_targets)
             if remaining_targets == 0:
@@ -79,7 +79,7 @@ class Node:
         attempts = 0
         remaining_targets = self.a
 
-        ## Recursively check left and right children, and keep "global" values for these 2 values
+        # recursively check left and right children, and keep "global" values for these 2 values
         attempts, remaining_targets = self.left.traverse(attempts, remaining_targets)
         attempts, remaining_targets = self.right.traverse(attempts, remaining_targets)
 

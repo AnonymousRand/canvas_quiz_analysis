@@ -1,4 +1,4 @@
-/*
+/**
  * Compile with `g++ binary_check.cpp canvas.cpp -lgmpxx -lgmp -o canvas`
  * Make sure to `sudo apt install libgmp-dev`
  */
@@ -52,13 +52,13 @@ mpf_class genTree(int k, int options, int numBranches, int oldScore, mpf_class o
                     * pow((float) (options - depth - 1) / (options - depth), j);
         }
 
-        /* If we've reached an ending, calculate attempts * total prob and add to EV */
+        // if we've reached an ending, calculate attempts * total prob and add to EV
         if (newScore == k) {
             EV += newAttempts * newProb;
             continue;
         }
 
-        /* Binary check simulator (don't forget symmetry!) */
+        // binary check simulator (don't forget symmetry!)
         int a = std::min(newScore - oldScore, k - (newScore - oldScore));
         int b = k - oldScore;
         if (a != 0 && b != 1) { // if we need binary check
@@ -79,8 +79,8 @@ mpf_class genTree(int k, int options, int numBranches, int oldScore, mpf_class o
             newAttempts += binaryCheckMemoize[b][a];
         }
 
-        /* Recursively call on sub-branches */
-        /* (num_branches = j + 1 to account for getting 0 more correct next attempt) */
+        // recursively call on sub-branches
+        // (num_branches = j + 1 to account for getting 0 more correct next attempt)
         EV += genTree(k, options, j + 1, newScore, newAttempts, newProb, depth + 1,
                 binaryCheckTrials, factorialMemoize, binaryCheckMemoize);
     }

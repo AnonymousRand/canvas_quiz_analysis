@@ -26,12 +26,12 @@ def gen_tree(k, options, num_branches=None, old_score=0, old_attempts=0, old_pro
                     * math.pow(1 / (options - depth), incorrect_before - j) \
                     * math.pow((options - depth - 1) / (options - depth), j)
         
-        ## If we've reached an ending, calculate attempts * total prob and add to EV
+        # if we've reached an ending, calculate attempts * total prob and add to EV
         if new_score == k:
             EV += new_attempts * new_prob
             continue
 
-        ## Binary check simulator (don't forget symmetry!)
+        # binary check simulator (don't forget symmetry!)
         a = min(new_score - old_score, k - (new_score - old_score))
         b = k - old_score
         if a != 0 and b != 1: # if we need binary check
@@ -48,8 +48,8 @@ def gen_tree(k, options, num_branches=None, old_score=0, old_attempts=0, old_pro
                     binary_check_memoize[b][a] = binary_check_attempts_total / binary_check_trials
             new_attempts += binary_check_memoize[b][a]
 
-        ## Recursively call on sub-branches
-        ## (num_branches = j + 1 to account for getting 0 more correct next attempt)
+        # recursively call on sub-branches
+        # (num_branches = j + 1 to account for getting 0 more correct next attempt)
         EV += gen_tree(k, options, j + 1, new_score, new_attempts, new_prob, depth + 1)
 
     return EV
