@@ -29,7 +29,7 @@ mpf_class combination(int n, int r, mpf_class* factorialMemoize) {
 }
 
 mpf_class genTree(int k, int options, int numBranches, int oldScore, mpf_class oldAttempts, mpf_class oldProb,
-        int depth, int binaryCheckTrials, mpf_class* factorialMemoize, mpf_class** binaryCheckMemoize) {
+        int depth, int trialCount, mpf_class* factorialMemoize, mpf_class** binCheckMemoize) {
     if (numBranches == NULL) {
         numBranches = k + 1;
     }
@@ -47,7 +47,8 @@ mpf_class genTree(int k, int options, int numBranches, int oldScore, mpf_class o
             newProb = oldProb;
         } else {
             newAttempts++;                  // remember that fourth attempts are overlapped and do not count
-            newProb = oldProb * combination(incorrectBefore, incorrectBefore - j, factorialMemoize) \
+            newProb = oldProb \
+                    * combination(incorrectBefore, incorrectBefore - j, factorialMemoize) \
                     * pow((float) 1 / (options - depth), incorrectBefore - j) \
                     * pow((float) (options - depth - 1) / (options - depth), j);
         }
@@ -62,27 +63,27 @@ mpf_class genTree(int k, int options, int numBranches, int oldScore, mpf_class o
         int a = std::min(newScore - oldScore, k - (newScore - oldScore));
         int b = k - oldScore;
         if (a != 0 && b != 1) { // if we need binary check
-            if (binaryCheckMemoize[b][a] == NULL) {
+            if (binCheckMemoize[b][a] == NULL) {
                 // shortcut if single-target and `b` is a power of 2 (no rounding)
                 // (https://stackoverflow.com/a/57025941)
                 if (a == 1 && (b & (b - 1) == 0) && b != 0) {
-                    binaryCheckMemoize[b][a] = log2(b);
+                    binCheckMemoize[b][a] = log2(b);
                 } else {
-                    int binaryCheckAttemptsTotal = 0;
-                    for (int i = 0; i < binaryCheckTrials; i++) {
+                    int binCheckAttemptsTotal = 0;
+                    for (int i = 0; i < trialCount; i++) {
                         Node tree(a, b, NULL, NULL);
-                        binaryCheckAttemptsTotal += tree.runBinaryCheck();
+                        binCheckAttemptsTotal += tree.runBinaryCheck();
                     }
-                    binaryCheckMemoize[b][a] = (float) binaryCheckAttemptsTotal / binaryCheckTrials;
+                    binCheckMemoize[b][a] = (float) binCheckAttemptsTotal / trialCount;
                 }
             }
-            newAttempts += binaryCheckMemoize[b][a];
+            newAttempts += binCheckMemoize[b][a];
         }
 
         // recursively call on sub-branches
         // (num_branches = j + 1 to account for getting 0 more correct next attempt)
         EV += genTree(k, options, j + 1, newScore, newAttempts, newProb, depth + 1,
-                binaryCheckTrials, factorialMemoize, binaryCheckMemoize);
+                trialCount, factorialMemoize, binCheckMemoize);
     }
 
     return EV;
@@ -92,7 +93,7 @@ int main() {
     int kMin;
     int kMax;
     int options;
-    int binaryCheckTrials = 1000;
+    int trialCount = 1000;
     std::cout << "k min (inclusive): ";
     std::cin >> kMin;
     std::cout << "k max (exclusive): ";
@@ -106,23 +107,23 @@ int main() {
         // (i dont think im initializing `mpf_class`es right, because there are no memory issues if they're doubles)
         factorialMemoize[i] = mpf_class(0.0);
     }
-    mpf_class** binaryCheckMemoize = (mpf_class**) malloc(kMax * sizeof(binaryCheckMemoize[0]));
+    mpf_class** binCheckMemoize = (mpf_class**) malloc(kMax * sizeof(binCheckMemoize[0]));
     for (int i = 0; i < kMax; i++) {
-        binaryCheckMemoize[i] = (mpf_class*) malloc(kMax * sizeof(binaryCheckMemoize[0][0]));
+        binCheckMemoize[i] = (mpf_class*) malloc(kMax * sizeof(binCheckMemoize[0][0]));
         for (int j = 0; j < kMax; j++) {
-            binaryCheckMemoize[i][j] = mpf_class(0.0);
+            binCheckMemoize[i][j] = mpf_class(0.0);
         }
     }
 
     for (int k = kMin; k < kMax; k++) {
         std::cout << k << " " \
-                << genTree(k, options, NULL, 0, 0, 1.0, 0, binaryCheckTrials, factorialMemoize, binaryCheckMemoize) / k \
+                << genTree(k, options, NULL, 0, 0, 1.0, 0, trialCount, factorialMemoize, binCheckMemoize) / k \
                 << "\n";
     }
 
     for (int i = 0; i < kMax; i++) {
-        free(binaryCheckMemoize[i]);
+        free(binCheckMemoize[i]);
     }
-    free(binaryCheckMemoize);
+    free(binCheckMemoize);
     free(factorialMemoize);
 }

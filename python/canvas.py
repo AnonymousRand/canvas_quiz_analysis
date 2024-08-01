@@ -4,8 +4,8 @@ from binary_check import Node
 min_k = int(input("k min (inclusive): "))
 max_k = int(input("k max (exclusive): "))
 options = int(input("number of options per question: "))
-binary_check_trials = 1000
-binary_check_memoize = [[0 for i in range(max_k)] for j in range(max_k)] # using max_k cause lazy
+trial_count = 1000
+bin_check_memoize = [[0 for i in range(max_k)] for j in range(max_k)] # using max_k cause lazy
 
 def gen_tree(k, options, num_branches=None, old_score=0, old_attempts=0, old_prob=1, depth=0):
     if num_branches is None:
@@ -22,7 +22,8 @@ def gen_tree(k, options, num_branches=None, old_score=0, old_attempts=0, old_pro
             new_prob = old_prob
         else:
             new_attempts += 1            # remember that fourth attempts are overlapped and do not count
-            new_prob = old_prob * math.comb(incorrect_before, incorrect_before - j) \
+            new_prob = old_prob \
+                    * math.comb(incorrect_before, incorrect_before - j) \
                     * math.pow(1 / (options - depth), incorrect_before - j) \
                     * math.pow((options - depth - 1) / (options - depth), j)
         
@@ -35,18 +36,18 @@ def gen_tree(k, options, num_branches=None, old_score=0, old_attempts=0, old_pro
         a = min(new_score - old_score, k - (new_score - old_score))
         b = k - old_score
         if a != 0 and b != 1: # if we need binary check
-            if binary_check_memoize[b][a] == 0:
+            if bin_check_memoize[b][a] == 0:
                 # shortcut if single-target and `b` is a power of 2 (no rounding)
                 # (https://stackoverflow.com/a/57025941)
                 if a == 1 and (b & (b - 1) == 0) and b != 0:
-                    binary_check_memoize[b][a] = math.log2(b)
+                    bin_check_memoize[b][a] = math.log2(b)
                 else:
-                    binary_check_attempts_total = 0
-                    for _ in range(binary_check_trials):
+                    bin_check_attempts_total = 0
+                    for _ in range(trial_count):
                         tree = Node(a, b)
-                        binary_check_attempts_total += tree.run_binary_check()
-                    binary_check_memoize[b][a] = binary_check_attempts_total / binary_check_trials
-            new_attempts += binary_check_memoize[b][a]
+                        bin_check_attempts_total += tree.run_binary_check()
+                    bin_check_memoize[b][a] = bin_check_attempts_total / trial_count
+            new_attempts += bin_check_memoize[b][a]
 
         # recursively call on sub-branches
         # (num_branches = j + 1 to account for getting 0 more correct next attempt)
