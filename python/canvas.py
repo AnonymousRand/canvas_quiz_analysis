@@ -45,7 +45,7 @@ def gen_tree(k, options, num_branches=None, old_score=0, old_attempts=0, old_pro
                     bin_check_attempts_total = 0
                     for _ in range(trial_count):
                         tree = Node(a, b)
-                        bin_check_attempts_total += tree.run_binary_check()
+                        bin_check_attempts_total += tree.run_bin_check()
                     bin_check_memoize[b][a] = bin_check_attempts_total / trial_count
             new_attempts += bin_check_memoize[b][a]
 

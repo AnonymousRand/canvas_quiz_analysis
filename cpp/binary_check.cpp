@@ -108,7 +108,7 @@ void Node::traverse(int& attempts, int& remainingTargets) {
     }
 }
 
-int Node::runBinaryCheck() {
+int Node::runBinCheck() {
     int attempts = 0;
     int remainingTargets = this->a;
 
@@ -131,7 +131,7 @@ int Node::runBinaryCheck() {
 //         for (int b = 0; b < bMax; b++) {
 //             for (int a = 0; a < b; a++) {
 //                 Node tree(a + 1, b + 1, NULL, NULL);
-//                 attempts[b][a] += tree.runBinaryCheck();
+//                 attempts[b][a] += tree.runBinCheck();
 //             }
 //         }
 //     }

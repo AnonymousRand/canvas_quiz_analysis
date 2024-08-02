@@ -75,7 +75,7 @@ class Node:
 
         return attempts, remaining_targets
 
-    def run_binary_check(self):
+    def run_bin_check(self):
         attempts = 0
         remaining_targets = self.a
 
@@ -95,7 +95,7 @@ if __name__ == "__main__":
         for b in range(max_b):
             for a in range(b):
                 tree = Node(a + 1, b + 1)
-                attempts[b][a] += tree.run_binary_check()
+                attempts[b][a] += tree.run_bin_check()
 
     for b in range(max_b):
         for a in range(b):

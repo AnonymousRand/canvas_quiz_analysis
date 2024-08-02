@@ -72,7 +72,7 @@ mpf_class genTree(int k, int options, int numBranches, int oldScore, mpf_class o
                     int binCheckAttemptsTotal = 0;
                     for (int i = 0; i < trialCount; i++) {
                         Node tree(a, b, NULL, NULL);
-                        binCheckAttemptsTotal += tree.runBinaryCheck();
+                        binCheckAttemptsTotal += tree.runBinCheck();
                     }
                     binCheckMemoize[b][a] = (float) binCheckAttemptsTotal / trialCount;
                 }
