@@ -116,9 +116,9 @@ int main() {
     }
 
     for (int k = kMin; k < kMax; k++) {
-        std::cout << k << " " \
-                << genTree(k, options, NULL, 0, 0, 1.0, 0, trialCount, factorialMemoize, binCheckMemoize) / k \
-                << "\n";
+        std::cout << k << " "
+                  << genTree(k, options, NULL, 0, 0, 1.0, 0, trialCount, factorialMemoize, binCheckMemoize) / k
+                  << "\n";
     }
 
     for (int i = 0; i < kMax; i++) {
