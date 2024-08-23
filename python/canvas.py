@@ -1,11 +1,8 @@
 import math
 from binary_check import Node
 
-min_k = int(input("k min (inclusive): "))
-max_k = int(input("k max (exclusive): "))
-options = int(input("number of options per question: "))
-binary_check_trials = 1000
-binary_check_memoize = [[0 for i in range(max_k)] for j in range(max_k)] # using max_k cause lazy
+BINARY_CHECK_TRIAL_COUNT = 1000
+binary_check_memoize = [] # not actually needed because python but just for consistency with the C++ version
 
 def gen_tree(k, options, num_branches=None, old_score=0, old_attempts=0, old_prob=1, depth=0):
     if num_branches is None:
@@ -14,8 +11,8 @@ def gen_tree(k, options, num_branches=None, old_score=0, old_attempts=0, old_pro
         num_branches = 1
     
     EV = 0
-    for j in range(num_branches):           # j is the red number
-        incorrect_before = k - old_score    # i (except for attempt 1 on the tree)
+    for j in range(num_branches):           # `j` is the red number
+        incorrect_before = k - old_score    # `i` (except for attempt 1 on the tree)
         new_score = k - j
         if depth == options - 1:
             new_prob = old_prob
@@ -41,18 +38,23 @@ def gen_tree(k, options, num_branches=None, old_score=0, old_attempts=0, old_pro
                     binary_check_memoize[b][a] = math.log2(b)
                 else:
                     new_attempts = 0
-                    for _ in range(binary_check_trials):
+                    for _ in range(BINARY_CHECK_TRIAL_COUNT):
                         tree = Node(a, b)
                         new_attempts += tree.run_binary_check()
-                    binary_check_memoize[b][a] = new_attempts / binary_check_trials
+                    binary_check_memoize[b][a] = new_attempts / BINARY_CHECK_TRIAL_COUNT
             new_attempts = old_attempts + 1 + binary_check_memoize[b][a]
 
         # recursively call on sub-branches
-        # num_branches = j + 1 to account for getting 0 more correct next attempt
+        # `j + 1` to account for getting 0 more correct next attempt
         EV += gen_tree(k, options, j + 1, new_score, new_attempts, new_prob, depth + 1)
 
     return EV
 
 # main
-for k in range(min_k, max_k):
-    print(k, gen_tree(k, options) / k)
+if __name__ == "__main__":
+    min_k = int(input("k min (inclusive): "))
+    max_k = int(input("k max (exclusive): "))
+    options = int(input("number of options per question: "))
+    binary_check_memoize = [[0 for i in range(max_k)] for j in range(max_k)] # using `max_k` cause lazy
+    for k in range(min_k, max_k):
+        print(k, gen_tree(k, options) / k)

@@ -7,27 +7,31 @@
 #include <gmpxx.h>
 #include <iostream>
 
-mpf_class factorial(int n, mpf_class* factorialMemoize) {
+const int BINARY_CHECK_TRIAL_COUNT = 1000;
+mpf_class* factorialMemoize;
+mpf_class** binaryCheckMemoize;
+
+mpf_class factorial(int n) {
     if (n == 1) {
         return n;
     }
     if (factorialMemoize[n] == NULL) {
-        factorialMemoize[n] = n * factorial(n - 1, factorialMemoize);
+        factorialMemoize[n] = n * factorial(n - 1);
     }
     return factorialMemoize[n];
 }
 
-mpf_class combination(int n, int r, mpf_class* factorialMemoize) {
+mpf_class combination(int n, int r) {
     if (r == 0 || n == r) {
         return 1;
     }
     
-    return factorial(n, factorialMemoize) \
-            / (factorial(r, factorialMemoize) * factorial(n - r, factorialMemoize));
+    return factorial(n) \
+            / (factorial(r) * factorial(n - r));
 }
 
-mpf_class genTree(int k, int options, int numBranches, int oldScore, mpf_class oldAttempts, mpf_class oldProb,
-        int depth, int binaryCheckTrials, mpf_class* factorialMemoize, mpf_class** binaryCheckMemoize) {
+mpf_class genTree(
+        int k, int options, int numBranches, int oldScore, mpf_class oldAttempts, mpf_class oldProb, int depth) {
     if (numBranches == NULL) {
         numBranches = k + 1;
     }
@@ -36,15 +40,15 @@ mpf_class genTree(int k, int options, int numBranches, int oldScore, mpf_class o
     }
 
     mpf_class EV = 0.0;
-    for (int j = 0; j < numBranches; j++) { // j is the red numberpc
-        int incorrectBefore = k - oldScore; // i (except for attempt 1 on the tree)
+    for (int j = 0; j < numBranches; j++) { // `j` is the red number
+        int incorrectBefore = k - oldScore; // `i` (except for attempt 1 on the tree)
         int newScore = k - j;
         mpf_class newAttempts;
         mpf_class newProb;
         if (depth == options - 1) {
             newProb = oldProb;
         } else {
-            newProb = oldProb * combination(incorrectBefore, incorrectBefore - j, factorialMemoize) \
+            newProb = oldProb * combination(incorrectBefore, incorrectBefore - j) \
                     * pow((float) 1 / (options - depth), incorrectBefore - j) \
                     * pow((float) (options - depth - 1) / (options - depth), j);
         }
@@ -67,20 +71,19 @@ mpf_class genTree(int k, int options, int numBranches, int oldScore, mpf_class o
                     binaryCheckMemoize[b][a] = log2(b);
                 } else {
                     newAttempts = 0;
-                    for (int i = 0; i < binaryCheckTrials; i++) {
+                    for (int i = 0; i < BINARY_CHECK_TRIAL_COUNT; i++) {
                         Node tree(a, b, NULL, NULL);
                         newAttempts += tree.runBinaryCheck();
                     }
-                    binaryCheckMemoize[b][a] = newAttempts / binaryCheckTrials;
+                    binaryCheckMemoize[b][a] = newAttempts / BINARY_CHECK_TRIAL_COUNT;
                 }
             }
             newAttempts = oldAttempts + 1 + binaryCheckMemoize[b][a];
         }
 
         // recursively call on sub-branches
-        // num_branches = j + 1 to account for getting 0 more correct next attempt
-        EV += genTree(k, options, j + 1, newScore, newAttempts, newProb, depth + 1,
-                binaryCheckTrials, factorialMemoize, binaryCheckMemoize);
+        // `j + 1` to account for getting 0 more correct next attempt
+        EV += genTree(k, options, j + 1, newScore, newAttempts, newProb, depth + 1);
     }
 
     return EV;
@@ -90,7 +93,6 @@ int main() {
     int kMin;
     int kMax;
     int options;
-    int binaryCheckTrials = 1000;
     std::cout << "k min (inclusive): ";
     std::cin >> kMin;
     std::cout << "k max (exclusive): ";
@@ -98,13 +100,13 @@ int main() {
     std::cout << "number of options per question: ";
     std::cin >> options;
 
-    mpf_class* factorialMemoize = (mpf_class*) malloc(kMax * sizeof(factorialMemoize[0])); // using kMax cause lazy
+    factorialMemoize = (mpf_class*) malloc(kMax * sizeof(factorialMemoize[0])); // using `kMax` cause lazy
     for (int i = 0; i < kMax; i++) {
         // "conditional jump or move depends on uninitialized value" there are no memory errors in ba sing se
         // (i dont think im initializing `mpf_class`es right, because there's no memory issues if they're `double`s)
         factorialMemoize[i] = mpf_class(0.0);
     }
-    mpf_class** binaryCheckMemoize = (mpf_class**) malloc(kMax * sizeof(binaryCheckMemoize[0]));
+    binaryCheckMemoize = (mpf_class**) malloc(kMax * sizeof(binaryCheckMemoize[0]));
     for (int i = 0; i < kMax; i++) {
         binaryCheckMemoize[i] = (mpf_class*) malloc(kMax * sizeof(binaryCheckMemoize[0][0]));
         for (int j = 0; j < kMax; j++) {
@@ -113,9 +115,7 @@ int main() {
     }
 
     for (int k = kMin; k < kMax; k++) {
-        std::cout << k << " " \
-                << genTree(k, options, NULL, 0, 0, 1.0, 0, binaryCheckTrials, factorialMemoize, binaryCheckMemoize) / k \
-                << "\n";
+        std::cout << k << " " << genTree(k, options, NULL, 0, 0, 1.0, 0) / k << "\n";
     }
 
     // free
