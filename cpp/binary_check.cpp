@@ -33,7 +33,7 @@ Node::Node(int a, int b, int rootVal, Node* parent) {
         parent->leaves.insert(parent->leaves.end(), this->leaves.begin(), this->leaves.end());
     }
 
-    // root: generate correct answers
+    // if root, generate correct answers
     if (parent == NULL) {
         std::random_device r; // srand() by time did not seem to seed well, so here we are
         std::default_random_engine e1(r());
@@ -74,7 +74,7 @@ void Node::traverse(int& attempts, int& remainingTargets) {
         return;
     }
 
-    // visit node and poison sibling like an ancient Chinese prince
+    // visit node and slaughter sibling
     if (!this->crossed) {
         attempts++;
         if (this->parent != NULL) {

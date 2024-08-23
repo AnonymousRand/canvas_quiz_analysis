@@ -28,7 +28,7 @@ class Node:
         if parent is not None:
             parent.leaves += self.leaves
 
-        # root: generate correct answers
+        # if root, generate correct answers
         if parent is None:
             answers = random.sample(range(b), a)
             for i in answers:
@@ -46,7 +46,7 @@ class Node:
         if remaining_targets == 0:
             return attempts, 0
 
-        # visit node and poison sibling like an ancient Chinese prince
+        # visit node and slaughter sibling
         if not self.crossed:
             attempts += 1
             if self.parent is not None:
