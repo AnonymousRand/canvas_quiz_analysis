@@ -19,5 +19,5 @@ class Node {
     public:
         Node(int a, int b, int rootVal, Node* parent);
         ~Node();
-        int runBinaryCheck();
+        int runBinCheck();
 };

@@ -75,30 +75,29 @@ class Node:
 
         return attempts, remaining_targets
 
-    def run_binary_check(self):
+    def run_bin_check(self):
         attempts = 0
         remaining_targets = self.a
 
-        # recursively check left and right children
-        # and keep "global" values for these 2 values
+        # recursively check left and right children, and keep "global" values for these 2 values
         attempts, remaining_targets = self.left.traverse(attempts, remaining_targets)
         attempts, remaining_targets = self.right.traverse(attempts, remaining_targets)
 
         return attempts
 
-# main
+## Main
 if __name__ == "__main__":
-    trials = 10000
+    TRIAL_COUNT = 10000
     max_b = 10
     attempts = [[0 for i in range(max_b)] for j in range(max_b)]
 
-    for _ in range(trials):
+    for _ in range(TRIAL_COUNT):
         for b in range(max_b):
             for a in range(b):
                 tree = Node(a + 1, b + 1)
-                attempts[b][a] += tree.run_binary_check()
+                attempts[b][a] += tree.run_bin_check()
 
     for b in range(max_b):
         for a in range(b):
-            print(f"{a + 1} out of {b + 1}: {attempts[b][a] / trials} attempts")
+            print(f"{a + 1} out of {b + 1}: {attempts[b][a] / TRIAL_COUNT} attempts")
         print()
