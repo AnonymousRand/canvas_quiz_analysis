@@ -52,7 +52,6 @@ def gen_tree(k, option_count, branch_count=None, old_score=0, old_attempts=0, ol
 
     return ev
 
-## Main
 if __name__ == "__main__":
     min_k = int(input("k min (inclusive): "))
     max_k = int(input("k max (exclusive): "))

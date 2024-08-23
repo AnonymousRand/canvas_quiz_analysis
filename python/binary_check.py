@@ -85,7 +85,6 @@ class Node:
 
         return attempts
 
-## Main
 if __name__ == "__main__":
     TRIAL_COUNT = 10000
     max_b = 10
