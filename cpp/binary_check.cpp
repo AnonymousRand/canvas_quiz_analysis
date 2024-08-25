@@ -1,4 +1,6 @@
-/* Compile with `g++ binary_check.cpp -o binary_check` */
+/**
+ * Compile with `g++ binary_check.cpp -o binary_check`.
+ */
 
 #include "binary_check.h"
 #include <iostream>
@@ -121,35 +123,33 @@ int Node::runBinCheck() {
     return attempts;
 }
 
-/*
-int main() {
-    int TRIAL_COUNT = 10000;
-    int bMax = 10;
-    int** attempts = (int**) calloc(bMax, sizeof(attempts[0]));
-    for (int i = 0; i < bMax; i++) {
-        attempts[i] = (int*) calloc(bMax, sizeof(attempts[0][0]));
-    }
-
-    for (int i = 0; i < TRIAL_COUNT; i++) {
-        for (int b = 0; b < bMax; b++) {
-            for (int a = 0; a < b; a++) {
-                Node tree(a + 1, b + 1, NULL, NULL);
-                attempts[b][a] += tree.runBinCheck();
-            }
-        }
-    }
-
-    for (int b = 0; b < bMax; b++) {
-        for (int a = 0; a < b; a++) {
-            std::cout << a + 1 << " out of " << b + 1 << ": " << attempts[b][a] / double(TRIAL_COUNT) << " attempts\n";
-        }
-        std::cout << "\n";
-    }
-
-    // free
-    for (int i = 0; i < bMax; i++) {
-        free(attempts[i]);
-    }
-    free(attempts);
-}
-*/
+// int main() {
+//     int TRIAL_COUNT = 10000;
+//     int bMax = 10;
+//     int** attempts = (int**) calloc(bMax, sizeof(attempts[0]));
+//     for (int i = 0; i < bMax; i++) {
+//         attempts[i] = (int*) calloc(bMax, sizeof(attempts[0][0]));
+//     }
+// 
+//     for (int i = 0; i < TRIAL_COUNT; i++) {
+//         for (int b = 0; b < bMax; b++) {
+//             for (int a = 0; a < b; a++) {
+//                 Node tree(a + 1, b + 1, NULL, NULL);
+//                 attempts[b][a] += tree.runBinCheck();
+//             }
+//         }
+//     }
+// 
+//     for (int b = 0; b < bMax; b++) {
+//         for (int a = 0; a < b; a++) {
+//             std::cout << a + 1 << " out of " << b + 1 << ": " << attempts[b][a] / double(TRIAL_COUNT) << " attempts\n";
+//         }
+//         std::cout << "\n";
+//     }
+// 
+//     // free
+//     for (int i = 0; i < bMax; i++) {
+//         free(attempts[i]);
+//     }
+//     free(attempts);
+// }
