@@ -1,16 +1,16 @@
 import random
 
-trials = 10000
-questions = 120
-choices = 4
-attempts = 0
+TRIAL_COUNT = 10000
+QUESTION_COUNT = 120
+OPTION_COUNT = 4
+attemptCount = 0
 
-for _ in range(trials):
-    for question in range(questions):
-        correct = random.randint(0, choices - 1)
-        for guess in range(choices - 1): # -1 for last attempt skip
-            attempts += 1
+for _ in range(TRIAL_COUNT):
+    for question in range(QUESTION_COUNT):
+        correct = random.randint(0, OPTION_COUNT - 1)
+        for guess in range(OPTION_COUNT - 1): # -1 for last attempt skip
+            attemptCount += 1
             if guess == correct:
                 break
 
-print((attempts / trials) / questions)
+print((attemptCount / TRIAL_COUNT) / QUESTION_COUNT)

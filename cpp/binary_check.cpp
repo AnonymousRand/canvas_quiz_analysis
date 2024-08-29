@@ -70,7 +70,7 @@ int Node::getScore() {
     return score;
 }
 
-void Node::traverse(int& attempts, int& remainingTargets) {
+void Node::traverse(int& attemptCount, int& remainingTargets) {
     // terminate recursion if we've found all
     if (remainingTargets == 0) {
         return;
@@ -78,13 +78,13 @@ void Node::traverse(int& attempts, int& remainingTargets) {
 
     // visit node and slaughter sibling
     if (!this->crossed) {
-        attempts++;
+        attemptCount++;
         if (this->parent != NULL) {
             this->parent->right->crossed = true;
         }
     }
 
-    // if leaf node; if no attempts += 1, then this is functionally a deduction
+    // if leaf node; if no `attemptCount++`, then this is functionally a deduction
     if (this->rootVal == 1) {
         if (this->correct) {
             remainingTargets--;
@@ -99,13 +99,13 @@ void Node::traverse(int& attempts, int& remainingTargets) {
 
     // recursively check left and right children
     if (this->left != NULL) {
-        this->left->traverse(attempts, remainingTargets);
+        this->left->traverse(attemptCount, remainingTargets);
         if (remainingTargets == 0) {
             return;
         }
     }
     if (this->right != NULL) {
-        this->right->traverse(attempts, remainingTargets);
+        this->right->traverse(attemptCount, remainingTargets);
         if (remainingTargets == 0) {
             return;
         }
@@ -113,43 +113,47 @@ void Node::traverse(int& attempts, int& remainingTargets) {
 }
 
 int Node::runBinCheck() {
-    int attempts = 0;
+    int attemptCount = 0;
     int remainingTargets = this->a;
 
     // recursively check left and right children, and keep "global" values for these 2 values
-    this->left->traverse(attempts, remainingTargets);
-    this->right->traverse(attempts, remainingTargets);
+    this->left->traverse(attemptCount, remainingTargets);
+    this->right->traverse(attemptCount, remainingTargets);
 
-    return attempts;
+    return attemptCount;
 }
 
 // int main() {
 //     int TRIAL_COUNT = 10000;
 //     int bMax = 10;
-//     int** attempts = (int**) calloc(bMax, sizeof(attempts[0]));
+//     int** attemptCount = (int**) calloc(bMax, sizeof(attemptCount[0]));
 //     for (int i = 0; i < bMax; i++) {
-//         attempts[i] = (int*) calloc(bMax, sizeof(attempts[0][0]));
+//         attemptCount[i] = (int*) calloc(bMax, sizeof(attemptCount[0][0]));
 //     }
 // 
 //     for (int i = 0; i < TRIAL_COUNT; i++) {
 //         for (int b = 0; b < bMax; b++) {
 //             for (int a = 0; a < b; a++) {
 //                 Node tree(a + 1, b + 1, NULL, NULL);
-//                 attempts[b][a] += tree.runBinCheck();
+//                 attemptCount[b][a] += tree.runBinCheck();
 //             }
 //         }
 //     }
 // 
 //     for (int b = 0; b < bMax; b++) {
 //         for (int a = 0; a < b; a++) {
-//             std::cout << a + 1 << " out of " << b + 1 << ": " << attempts[b][a] / double(TRIAL_COUNT) << " attempts\n";
+//             std::cout << a + 1
+//                     << " out of "
+//                     << b + 1
+//                     << ": "
+//                     << attemptCount[b][a] / (float) TRIAL_COUNT << " attempts\n";
 //         }
 //         std::cout << "\n";
 //     }
 // 
 //     // free
 //     for (int i = 0; i < bMax; i++) {
-//         free(attempts[i]);
+//         free(attemptCount[i]);
 //     }
-//     free(attempts);
+//     free(attemptCount);
 // }

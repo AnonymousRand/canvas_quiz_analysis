@@ -32,7 +32,13 @@ mpf_class combination(int n, int r) {
 }
 
 mpf_class genTree(
-        int k, int optionCount, int branchCount, int oldScore, mpf_class oldAttempts, mpf_class oldProb, int depth) {
+        int k,
+        int optionCount,
+        int branchCount,
+        int scoreOld,
+        mpf_class attemptCountOld,
+        mpf_class probOld,
+        int depth) {
     if (branchCount == NULL) {
         branchCount = k + 1;
     }
@@ -42,29 +48,29 @@ mpf_class genTree(
 
     mpf_class ev = 0.0;
     for (int j = 0; j < branchCount; j++) { // `j` is the red number
-        int incorrectBefore = k - oldScore; // `i` (except for attempt 1 on the tree)
-        int newScore = k - j;
-        mpf_class newAttempts = oldAttempts;
-        mpf_class newProb;
+        int incorrectBefore = k - scoreOld; // `i` (except for attempt 1 on the tree)
+        int scoreNew = k - j;
+        mpf_class newAttemptCount = attemptCountOld;
+        mpf_class probNew;
         if (depth == optionCount - 1) {     // if on fourth non-extra attempt
-            newProb = oldProb;
+            probNew = probOld;
         } else {
-            newAttempts++;                  // remember that fourth attempts are overlapped and do not count
-            newProb = oldProb \
+            newAttemptCount++;                  // remember that fourth attempts are overlapped and do not count
+            probNew = probOld \
                     * combination(incorrectBefore, incorrectBefore - j) \
                     * pow((float) 1 / (optionCount - depth), incorrectBefore - j) \
                     * pow((float) (optionCount - depth - 1) / (optionCount - depth), j);
         }
 
         // if we've reached an ending, calculate attempts * total prob and add to ev
-        if (newScore == k) {
-            ev += newAttempts * newProb;
+        if (scoreNew == k) {
+            ev += newAttemptCount * probNew;
             continue;
         }
 
         // binary check simulator (don't forget symmetry!)
-        int a = std::min(newScore - oldScore, k - (newScore - oldScore));
-        int b = k - oldScore;
+        int a = std::min(scoreNew - scoreOld, k - (scoreNew - scoreOld));
+        int b = k - scoreOld;
         if (a != 0 && b != 1) { // if we need binary check
             if (binCheckMemoize[b][a] == NULL) {
                 if (a == 1 && (b & (b - 1) == 0) && b != 0) {
@@ -72,20 +78,20 @@ mpf_class genTree(
                     // (https://stackoverflow.com/a/57025941)
                     binCheckMemoize[b][a] = log2(b);
                 } else {
-                    int binCheckAttemptsTotal = 0;
+                    int binCheckAttemptCountTotal = 0;
                     for (int i = 0; i < BIN_CHECK_TRIAL_COUNT; i++) {
                         Node tree(a, b, NULL, NULL);
-                        binCheckAttemptsTotal += tree.runBinCheck();
+                        binCheckAttemptCountTotal += tree.runBinCheck();
                     }
-                    binCheckMemoize[b][a] = (float) binCheckAttemptsTotal / BIN_CHECK_TRIAL_COUNT;
+                    binCheckMemoize[b][a] = (float) binCheckAttemptCountTotal / BIN_CHECK_TRIAL_COUNT;
                 }
             }
-            newAttempts += binCheckMemoize[b][a];
+            newAttemptCount += binCheckMemoize[b][a];
         }
 
         // recursively call on sub-branches
         // `j + 1` to account for getting 0 more correct next attempt
-        ev += genTree(k, optionCount, j + 1, newScore, newAttempts, newProb, depth + 1);
+        ev += genTree(k, optionCount, j + 1, scoreNew, newAttemptCount, probNew, depth + 1);
     }
 
     return ev;
@@ -99,7 +105,7 @@ int main() {
     std::cin >> kMin;
     std::cout << "k max (exclusive): ";
     std::cin >> kMax;
-    std::cout << "number of optionCount per question: ";
+    std::cout << "number of options per question: ";
     std::cin >> optionCount;
 
     factorialMemoize = (mpf_class*) malloc(kMax * sizeof(factorialMemoize[0])); // using `kMax` cause lazy

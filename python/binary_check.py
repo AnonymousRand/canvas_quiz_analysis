@@ -41,62 +41,62 @@ class Node:
                 score += 1
         return score
 
-    def traverse(self, attempts, remaining_targets):
+    def traverse(self, attempt_count, remaining_targets):
         # terminate recursion if we've found all
         if remaining_targets == 0:
-            return attempts, 0
+            return attempt_count, 0
 
         # visit node and slaughter sibling
         if not self.crossed:
-            attempts += 1
+            attempt_count += 1
             if self.parent is not None:
                 self.parent.right.crossed = True
 
-        # if leaf node; if no attempts += 1, then this is functionally a deduction
+        # if leaf node; if no `attempt_count += 1`, then this is functionally a deduction
         if self.root_val == 1:
             if self.correct:
-                return attempts, remaining_targets - 1
+                return attempt_count, remaining_targets - 1
             else:
-                return attempts, remaining_targets
+                return attempt_count, remaining_targets
 
         # if score is 0, skip entire subtree ("flip")
         if self.get_score() == 0:
-            return attempts, remaining_targets
+            return attempt_count, remaining_targets
 
         # recursively check left and right children
         if self.left is not None:
-            attempts, remaining_targets = self.left.traverse(attempts, remaining_targets)
+            attempt_count, remaining_targets = self.left.traverse(attempt_count, remaining_targets)
             if remaining_targets == 0:
-                return attempts, remaining_targets
+                return attempt_count, remaining_targets
         if self.right is not None:
-            attempts, remaining_targets = self.right.traverse(attempts, remaining_targets)
+            attempt_count, remaining_targets = self.right.traverse(attempt_count, remaining_targets)
             if remaining_targets == 0:
-                return attempts, remaining_targets
+                return attempt_count, remaining_targets
 
-        return attempts, remaining_targets
+        return attempt_count, remaining_targets
 
     def run_bin_check(self):
-        attempts = 0
+        attempt_count = 0
         remaining_targets = self.a
 
         # recursively check left and right children, and keep "global" values for these 2 values
-        attempts, remaining_targets = self.left.traverse(attempts, remaining_targets)
-        attempts, remaining_targets = self.right.traverse(attempts, remaining_targets)
+        attempt_count, remaining_targets = self.left.traverse(attempt_count, remaining_targets)
+        attempt_count, remaining_targets = self.right.traverse(attempt_count, remaining_targets)
 
-        return attempts
+        return attempt_count
 
 if __name__ == "__main__":
     TRIAL_COUNT = 10000
     max_b = 10
-    attempts = [[0 for i in range(max_b)] for j in range(max_b)]
+    attempt_count = [[0 for i in range(max_b)] for j in range(max_b)]
 
     for _ in range(TRIAL_COUNT):
         for b in range(max_b):
             for a in range(b):
                 tree = Node(a + 1, b + 1)
-                attempts[b][a] += tree.run_bin_check()
+                attempt_count[b][a] += tree.run_bin_check()
 
     for b in range(max_b):
         for a in range(b):
-            print(f"{a + 1} out of {b + 1}: {attempts[b][a] / TRIAL_COUNT} attempts")
+            print(f"{a + 1} out of {b + 1}: {attempt_count[b][a] / TRIAL_COUNT} attempts")
         print()
