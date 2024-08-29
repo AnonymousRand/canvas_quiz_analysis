@@ -4,7 +4,7 @@ from binary_check import Node
 BIN_CHECK_TRIAL_COUNT = 1000
 bin_check_memoize = [] # not actually needed because python; just for consistency with the C++ version
 
-def gen_tree(k, option_count, branch_count=None, score_old=0, attempt_count_old=0, prob_old=1.0, depth=0):
+def gen_tree(k, option_count, branch_count=None, old_score=0, old_attempt_count=0, old_prob=1.0, depth=0):
     if branch_count is None:
         branch_count = k + 1
     if depth == option_count - 1:
@@ -12,26 +12,26 @@ def gen_tree(k, option_count, branch_count=None, score_old=0, attempt_count_old=
     
     ev = 0
     for j in range(branch_count):        # `j` is the red number
-        incorrect_before = k - score_old # `i` (except for attempt 1 on the tree)
-        score_new = k - j
-        attempt_count_new = attempt_count_old
+        incorrect_before = k - old_score # `i` (except for attempt 1 on the tree)
+        new_score = k - j
+        new_attempt_count = old_attempt_count
         if depth == option_count - 1:    # if on fourth non-extra attempt
-            prob_new = prob_old
+            new_prob = old_prob
         else:
-            attempt_count_new += 1       # remember that fourth attempts are overlapped and do not count
-            prob_new = prob_old \
+            new_attempt_count += 1       # remember that fourth attempts are overlapped and do not count
+            new_prob = old_prob \
                     * math.comb(incorrect_before, incorrect_before - j) \
                     * math.pow(1 / (option_count - depth), incorrect_before - j) \
                     * math.pow((option_count - depth - 1) / (option_count - depth), j)
         
         # if we've reached an ending, calculate attempts * total prob and add to ev
-        if score_new == k:
-            ev += attempt_count_new * prob_new
+        if new_score == k:
+            ev += new_attempt_count * new_prob
             continue
 
         # binary check simulator (don't forget symmetry!)
-        a = min(score_new - score_old, k - (score_new - score_old))
-        b = k - score_old
+        a = min(new_score - old_score, k - (new_score - old_score))
+        b = k - old_score
         if a != 0 and b != 1: # if we need binary check
             if bin_check_memoize[b][a] is None:
                 if a == 1 and (b & (b - 1) == 0) and b != 0:
@@ -39,16 +39,16 @@ def gen_tree(k, option_count, branch_count=None, score_old=0, attempt_count_old=
                     # (https://stackoverflow.com/a/57025941)
                     bin_check_memoize[b][a] = math.log2(b)
                 else:
-                    bin_check_attempt_count_total = 0
+                    bin_check_total_attempt_count = 0
                     for _ in range(BIN_CHECK_TRIAL_COUNT):
                         tree = Node(a, b)
-                        bin_check_attempt_count_total += tree.run_bin_check()
-                    bin_check_memoize[b][a] = bin_check_attempt_count_total / BIN_CHECK_TRIAL_COUNT
-            attempt_count_new += bin_check_memoize[b][a]
+                        bin_check_total_attempt_count += tree.run_bin_check()
+                    bin_check_memoize[b][a] = bin_check_total_attempt_count / BIN_CHECK_TRIAL_COUNT
+            new_attempt_count += bin_check_memoize[b][a]
 
         # recursively call on sub-branches
         # `j + 1` to account for getting 0 more correct next attempt
-        ev += gen_tree(k, option_count, j + 1, score_new, attempt_count_new, prob_new, depth + 1)
+        ev += gen_tree(k, option_count, j + 1, new_score, new_attempt_count, new_prob, depth + 1)
 
     return ev
 
