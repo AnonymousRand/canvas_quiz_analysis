@@ -14,7 +14,7 @@ class Node {
         std::vector<Node*> leaves;
 
         int getScore();
-        void traverse(int& attempts, int& remainingTargets);
+        void traverse(int& attemptCount, int& remainingTargets);
 
     public:
         Node(int a, int b, int rootVal, Node* parent);
