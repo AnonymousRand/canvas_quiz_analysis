@@ -71,22 +71,23 @@ mpf_class genTree(
         // binary check simulator (don't forget symmetry!)
         int a = std::min(newScore - oldScore, k - (newScore - oldScore));
         int b = k - oldScore;
-        if (a != 0 && b != 1) { // if we need binary check
-            if (binCheckMemoize[b][a] == NULL) {
+        // if we need binary check
+        if (a != 0 && b != 1) {
+            if (binCheckMemoize[a][b] == NULL) {
                 if (a == 1 && (b & (b - 1) == 0) && b != 0) {
                     // if single-target and `b` is a power of 2 (no rounding), take shortcut    
                     // (https://stackoverflow.com/a/57025941)
-                    binCheckMemoize[b][a] = log2(b);
+                    binCheckMemoize[a][b] = log2(b);
                 } else {
                     int binCheckTotalAttemptCount = 0;
                     for (int i = 0; i < BIN_CHECK_TRIAL_COUNT; i++) {
                         Node tree(a, b, NULL, NULL);
                         binCheckTotalAttemptCount += tree.runBinCheck();
                     }
-                    binCheckMemoize[b][a] = (float) binCheckTotalAttemptCount / BIN_CHECK_TRIAL_COUNT;
+                    binCheckMemoize[a][b] = (float) binCheckTotalAttemptCount / BIN_CHECK_TRIAL_COUNT;
                 }
             }
-            newAttemptCount += binCheckMemoize[b][a];
+            newAttemptCount += binCheckMemoize[a][b];
         }
 
         // recursively call on sub-branches

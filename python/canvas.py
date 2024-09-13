@@ -32,19 +32,20 @@ def gen_tree(k, option_count, branch_count=None, old_score=0, old_attempt_count=
         # binary check simulator (don't forget symmetry!)
         a = min(new_score - old_score, k - (new_score - old_score))
         b = k - old_score
-        if a != 0 and b != 1: # if we need binary check
-            if bin_check_memoize[b][a] is None:
+        # if we need binary check
+        if a != 0 and b != 1:
+            if bin_check_memoize[a][b] is None:
                 if a == 1 and (b & (b - 1) == 0) and b != 0:
                     # if single-target and `b` is a power of 2 (no rounding), take shortcut
                     # (https://stackoverflow.com/a/57025941)
-                    bin_check_memoize[b][a] = math.log2(b)
+                    bin_check_memoize[a][b] = math.log2(b)
                 else:
                     bin_check_total_attempt_count = 0
                     for _ in range(BIN_CHECK_TRIAL_COUNT):
                         tree = Node(a, b)
                         bin_check_total_attempt_count += tree.run_bin_check()
-                    bin_check_memoize[b][a] = bin_check_total_attempt_count / BIN_CHECK_TRIAL_COUNT
-            new_attempt_count += bin_check_memoize[b][a]
+                    bin_check_memoize[a][b] = bin_check_total_attempt_count / BIN_CHECK_TRIAL_COUNT
+            new_attempt_count += bin_check_memoize[a][b]
 
         # recursively call on sub-branches
         # `j + 1` to account for getting 0 more correct next attempt
