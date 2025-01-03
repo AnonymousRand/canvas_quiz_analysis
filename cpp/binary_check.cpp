@@ -1,6 +1,4 @@
-/**
- * Compile with `g++ binary_check.cpp -o binary_check`.
- */
+// compile with `g++ binary_check.cpp -o binary_check`
 
 #include "binary_check.h"
 #include <iostream>

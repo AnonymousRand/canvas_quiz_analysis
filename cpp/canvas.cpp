@@ -1,7 +1,5 @@
-/**
- * Compile with `g++ binary_check.cpp canvas.cpp -lgmpxx -lgmp -o canvas`. Make sure to
- * `sudo apt install libgmp-dev`.
- */
+// compile with `g++ binary_check.cpp canvas.cpp -lgmpxx -lgmp -o canvas`
+// make sure to `sudo apt install libgmp-dev`
 
 #include "binary_check.h"
 #include <algorithm>
