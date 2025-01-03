@@ -32,13 +32,14 @@ mpf_class combination(int n, int r) {
 }
 
 mpf_class genTree(
-        int k,
-        int optionCount,
-        int branchCount,
-        int oldScore,
-        mpf_class oldAttemptCount,
-        mpf_class oldProb,
-        int depth) {
+    int k,
+    int optionCount,
+    int branchCount,
+    int oldScore,
+    mpf_class oldAttemptCount,
+    mpf_class oldProb,
+    int depth
+) {
     if (branchCount == NULL) {
         branchCount = k + 1;
     }
