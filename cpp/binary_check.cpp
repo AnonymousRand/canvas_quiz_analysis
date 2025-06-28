@@ -121,37 +121,39 @@ int Node::runBinCheck() {
     return attemptCount;
 }
 
-// int main() {
-//     int TRIAL_COUNT = 10000;
-//     int bMax = 10;
-//     int** attemptCount = (int**) calloc(bMax, sizeof(attemptCount[0]));
-//     for (int i = 0; i < bMax; i++) {
-//         attemptCount[i] = (int*) calloc(bMax, sizeof(attemptCount[0][0]));
-//     }
-// 
-//     for (int i = 0; i < TRIAL_COUNT; i++) {
-//         for (int b = 0; b < bMax; b++) {
-//             for (int a = 0; a < b; a++) {
-//                 Node tree(a + 1, b + 1, NULL, NULL);
-//                 attemptCount[b][a] += tree.runBinCheck();
-//             }
-//         }
-//     }
-// 
-//     for (int b = 0; b < bMax; b++) {
-//         for (int a = 0; a < b; a++) {
-//             std::cout << a + 1
-//                     << " out of "
-//                     << b + 1
-//                     << ": "
-//                     << attemptCount[b][a] / (float) TRIAL_COUNT << " attempts\n";
-//         }
-//         std::cout << "\n";
-//     }
-// 
-//     // free
-//     for (int i = 0; i < bMax; i++) {
-//         free(attemptCount[i]);
-//     }
-//     free(attemptCount);
-// }
+/*
+int main() {
+    int TRIAL_COUNT = 10000;
+    int bMax = 10;
+    int** attemptCount = (int**) calloc(bMax, sizeof(attemptCount[0]));
+    for (int i = 0; i < bMax; i++) {
+        attemptCount[i] = (int*) calloc(bMax, sizeof(attemptCount[0][0]));
+    }
+
+    for (int i = 0; i < TRIAL_COUNT; i++) {
+        for (int b = 0; b < bMax; b++) {
+            for (int a = 0; a < b; a++) {
+                Node tree(a + 1, b + 1, NULL, NULL);
+                attemptCount[b][a] += tree.runBinCheck();
+            }
+        }
+    }
+
+    for (int b = 0; b < bMax; b++) {
+        for (int a = 0; a < b; a++) {
+            std::cout << a + 1
+                    << " out of "
+                    << b + 1
+                    << ": "
+                    << attemptCount[b][a] / (float) TRIAL_COUNT << " attempts\n";
+        }
+        std::cout << "\n";
+    }
+
+    // free
+    for (int i = 0; i < bMax; i++) {
+        free(attemptCount[i]);
+    }
+    free(attemptCount);
+}
+*/
