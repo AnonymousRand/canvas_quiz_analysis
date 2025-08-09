@@ -51,10 +51,11 @@ mpf_class genTree(
         int newScore = k - j;
         mpf_class newAttemptCount = oldAttemptCount;
         mpf_class newProb;
-        if (depth == optionCount - 1) {     // if on fourth non-extra attempt
+        if (depth == optionCount - 1) {
+            // if on fourth non-extra attempt
             newProb = oldProb;
         } else {
-            newAttemptCount++;                  // remember that fourth attempts are overlapped and do not count
+            newAttemptCount++;              // remember that fourth attempts are overlapped and do not count
             newProb = oldProb \
                     * combination(incorrectBefore, incorrectBefore - j) \
                     * pow((float) 1 / (optionCount - depth), incorrectBefore - j) \
