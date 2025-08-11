@@ -1,8 +1,10 @@
 import math
 from binary_check import Node
 
+
 BIN_CHECK_TRIAL_COUNT = 1000
 bin_check_memoize = []
+
 
 def gen_tree(k, option_count, branch_count=None, old_score=0, old_attempt_count=0, old_prob=1.0, depth=0):
     if branch_count is None:
@@ -53,6 +55,7 @@ def gen_tree(k, option_count, branch_count=None, old_score=0, old_attempt_count=
         ev += gen_tree(k, option_count, j + 1, new_score, new_attempt_count, new_prob, depth + 1)
 
     return ev
+
 
 if __name__ == "__main__":
     min_k = int(input("k min (inclusive): "))

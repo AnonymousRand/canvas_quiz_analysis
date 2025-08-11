@@ -5,17 +5,17 @@
 #include <random>
 #include <unordered_set>
 
+
 Node::Node(int a, int b, int rootVal, Node* parent) {
     this->a = a;
     this->b = b;
-    if (rootVal == NULL) {
+    if (rootVal == -1) {
         rootVal = b;
     }
     this->rootVal = rootVal;
     this->parent = parent;
-
-    this->left = NULL;
-    this->right = NULL;
+    this->left = nullptr;
+    this->right = nullptr;
     this->crossed = false;
     this->correct = false;
 
@@ -24,17 +24,17 @@ Node::Node(int a, int b, int rootVal, Node* parent) {
         int rightVal = rootVal - leftVal;
         this->left = new Node(a, b, leftVal, this);
         this->right = new Node(a, b, rightVal, this);
-    } else if (rootVal == 1 && parent != NULL) {
+    } else if (rootVal == 1 && parent != nullptr) {
         parent->leaves.push_back(this);
     }
 
     // sync leaves information all the way up to tree root
-    if (parent != NULL) {
+    if (parent != nullptr) {
         parent->leaves.insert(parent->leaves.end(), this->leaves.begin(), this->leaves.end());
     }
 
     // if root, generate correct answers
-    if (parent == NULL) {
+    if (parent == nullptr) {
         std::random_device r; // srand() by time did not seem to seed well, so here we are
         std::default_random_engine e1(r());
         std::uniform_int_distribution<int> rng(0, b - 1);
@@ -49,14 +49,18 @@ Node::Node(int a, int b, int rootVal, Node* parent) {
     }
 }
 
+
 Node::~Node() {
-    if (this->left != NULL) {
+    if (this->left != nullptr) {
         delete this->left;
+        this->left = nullptr;
     }
-    if (this->right != NULL) {
+    if (this->right != nullptr) {
         delete this->right;
+        this->right = nullptr;
     }
 }
+
 
 int Node::getScore() {
     int score = 0;
@@ -68,6 +72,7 @@ int Node::getScore() {
     return score;
 }
 
+
 void Node::traverse(int& attemptCount, int& remainingTargets) {
     // terminate recursion if we've found all
     if (remainingTargets == 0) {
@@ -77,7 +82,7 @@ void Node::traverse(int& attemptCount, int& remainingTargets) {
     // visit node and slaughter sibling
     if (!this->crossed) {
         attemptCount++;
-        if (this->parent != NULL) {
+        if (this->parent != nullptr) {
             this->parent->right->crossed = true;
         }
     }
@@ -96,19 +101,20 @@ void Node::traverse(int& attemptCount, int& remainingTargets) {
     }
 
     // recursively check left and right children
-    if (this->left != NULL) {
+    if (this->left != nullptr) {
         this->left->traverse(attemptCount, remainingTargets);
         if (remainingTargets == 0) {
             return;
         }
     }
-    if (this->right != NULL) {
+    if (this->right != nullptr) {
         this->right->traverse(attemptCount, remainingTargets);
         if (remainingTargets == 0) {
             return;
         }
     }
 }
+
 
 int Node::runBinCheck() {
     int attemptCount = 0;
@@ -120,6 +126,7 @@ int Node::runBinCheck() {
 
     return attemptCount;
 }
+
 
 /*
 int main() {
@@ -133,7 +140,7 @@ int main() {
     for (int i = 0; i < TRIAL_COUNT; i++) {
         for (int b = 0; b < bMax; b++) {
             for (int a = 0; a < b; a++) {
-                Node tree(a + 1, b + 1, NULL, NULL);
+                Node tree(a + 1, b + 1, -1, nullptr);
                 attemptCount[b][a] += tree.runBinCheck();
             }
         }

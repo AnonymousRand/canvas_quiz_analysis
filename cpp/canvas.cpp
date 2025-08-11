@@ -7,19 +7,22 @@
 #include <gmpxx.h>
 #include <iostream>
 
+
 const int BIN_CHECK_TRIAL_COUNT = 1000;
 mpf_class* factorialMemoize;
 mpf_class** binCheckMemoize;
+
 
 mpf_class factorial(int n) {
     if (n == 1) {
         return n;
     }
-    if (factorialMemoize[n] == NULL) {
+    if (factorialMemoize[n] == -1) {
         factorialMemoize[n] = n * factorial(n - 1);
     }
     return factorialMemoize[n];
 }
+
 
 mpf_class combination(int n, int r) {
     if (r == 0 || n == r) {
@@ -29,16 +32,11 @@ mpf_class combination(int n, int r) {
     return factorial(n) / (factorial(r) * factorial(n - r));
 }
 
+
 mpf_class genTree(
-    int k,
-    int optionCount,
-    int branchCount,
-    int oldScore,
-    mpf_class oldAttemptCount,
-    mpf_class oldProb,
-    int depth
+    int k, int optionCount, int branchCount, int oldScore, mpf_class oldAttemptCount, mpf_class oldProb, int depth
 ) {
-    if (branchCount == NULL) {
+    if (branchCount == -1) {
         branchCount = k + 1;
     }
     if (depth == optionCount - 1) {
@@ -73,7 +71,7 @@ mpf_class genTree(
         int b = k - oldScore;
         // if we need binary check
         if (a != 0 && b != 1) {
-            if (binCheckMemoize[a][b] == NULL) {
+            if (binCheckMemoize[a][b] == -1) {
                 if (a == 1 && (b & (b - 1) == 0) && b != 0) {
                     // if single-target and `b` is a power of 2 (no rounding), take shortcut    
                     // (https://stackoverflow.com/a/57025941)
@@ -81,7 +79,7 @@ mpf_class genTree(
                 } else {
                     int binCheckTotalAttemptCount = 0;
                     for (int i = 0; i < BIN_CHECK_TRIAL_COUNT; i++) {
-                        Node tree(a, b, NULL, NULL);
+                        Node tree(a, b, -1, nullptr);
                         binCheckTotalAttemptCount += tree.runBinCheck();
                     }
                     binCheckMemoize[a][b] = (float) binCheckTotalAttemptCount / BIN_CHECK_TRIAL_COUNT;
@@ -98,39 +96,42 @@ mpf_class genTree(
     return ev;
 }
 
+
 int main() {
-    int kMin;
-    int kMax;
+    int minK;
+    int maxK;
     int optionCount;
     std::cout << "k min (inclusive): ";
-    std::cin >> kMin;
+    std::cin >> minK;
     std::cout << "k max (exclusive): ";
-    std::cin >> kMax;
+    std::cin >> maxK;
     std::cout << "number of options per question: ";
     std::cin >> optionCount;
 
-    factorialMemoize = (mpf_class*) malloc(kMax * sizeof(factorialMemoize[0])); // using `kMax` cause lazy
-    for (int i = 0; i < kMax; i++) {
+    // initialize arrays
+    factorialMemoize = new mpf_class[maxK]; // using `maxK` cause lazy
+    for (int i = 0; i < maxK; i++) {
         // "conditional jump or move depends on uninitialized value" there are no memory errors in ba sing se
-        // i dont think im initializing `mpf_class`es right, because there are no memory issues if they're `double`s
-        factorialMemoize[i] = mpf_class(0.0);
+        // (I don't think I'm initializing `mpf_class`es right, since there are no memory issues if they're `double`s?)
+        factorialMemoize[i] = mpf_class(-1.0);
     }
-    binCheckMemoize = (mpf_class**) malloc(kMax * sizeof(binCheckMemoize[0]));
-    for (int i = 0; i < kMax; i++) {
-        binCheckMemoize[i] = (mpf_class*) malloc(kMax * sizeof(binCheckMemoize[0][0]));
-        for (int j = 0; j < kMax; j++) {
-            binCheckMemoize[i][j] = mpf_class(0.0);
+    binCheckMemoize = new mpf_class*[maxK];
+    for (int i = 0; i < maxK; i++) {
+        binCheckMemoize[i] = new mpf_class[maxK];
+        for (int j = 0; j < maxK; j++) {
+            binCheckMemoize[i][j] = mpf_class(-1.0);
         }
     }
 
-    for (int k = kMin; k < kMax; k++) {
-        std::cout << k << " " << genTree(k, optionCount, NULL, 0, 0, 1.0, 0) / k << "\n";
+    // run
+    for (int k = minK; k < maxK; k++) {
+        std::cout << k << " " << genTree(k, optionCount, -1, 0, 0, 1.0, 0) / k << "\n";
     }
 
     // free
-    for (int i = 0; i < kMax; i++) {
-        free(binCheckMemoize[i]);
+    for (int i = 0; i < maxK; i++) {
+        delete[] binCheckMemoize[i];
     }
-    free(binCheckMemoize);
-    free(factorialMemoize);
+    delete[] binCheckMemoize;
+    delete[] factorialMemoize;
 }

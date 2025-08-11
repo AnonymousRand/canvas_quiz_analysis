@@ -1,6 +1,13 @@
 #include <vector>
 
+
 class Node {
+    public:
+        Node(int a, int b, int rootVal, Node* parent);
+        ~Node();
+
+        int runBinCheck();
+
     private:
         int a;
         int b;
@@ -15,9 +22,4 @@ class Node {
 
         int getScore();
         void traverse(int& attemptCount, int& remainingTargets);
-
-    public:
-        Node(int a, int b, int rootVal, Node* parent);
-        ~Node();
-        int runBinCheck();
 };

@@ -1,6 +1,7 @@
 import math
 import random
 
+
 class Node:
     def __init__(self, a, b, root_val=None, parent=None):
         self.a = a
@@ -84,6 +85,7 @@ class Node:
         attempt_count, remaining_targets = self.right.traverse(attempt_count, remaining_targets)
 
         return attempt_count
+
 
 if __name__ == "__main__":
     TRIAL_COUNT = 10000
