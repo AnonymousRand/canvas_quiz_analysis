@@ -64,7 +64,7 @@ if __name__ == "__main__":
     min_k = int(input("k min (inclusive): "))
     max_k = int(input("k max (exclusive): "))
     option_count = int(input("number of options per question: "))
-    bin_check_memoize = [[None for i in range(max_k)] for j in range(max_k)] # using `max_k` cause lazy
+    bin_check_memoize = [[None for i in range(max_k)] for j in range(max_k)] # using `max_k` cuz lazy
 
     for k in range(min_k, max_k):
         print(k, gen_tree(k, option_count) / k)

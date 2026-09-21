@@ -112,10 +112,10 @@ int main() {
     std::cin >> optionCount;
 
     // initialize arrays
-    factorialMemoize = new mpf_class[maxK]; // using `maxK` cause lazy
+    factorialMemoize = new mpf_class[maxK]; // using `maxK` cuz lazy
     for (int i = 0; i < maxK; i++) {
         // "conditional jump or move depends on uninitialized value" there are no memory errors in ba sing se
-        // (I don't think I'm initializing `mpf_class`es right, since there are no memory issues if they're `double`s?)
+        // (i don't think i'm initializing `mpf_class`es right, since there are no memory issues if they're `double`s?)
         factorialMemoize[i] = mpf_class(-1.0);
     }
     binCheckMemoize = new mpf_class*[maxK];
